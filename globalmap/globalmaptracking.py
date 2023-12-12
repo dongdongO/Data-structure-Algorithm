@@ -17,7 +17,7 @@ for node_id in graph.nodes:
     y = node_data.get("y", 0)*87.3
 
     ax.scatter(x, y, color="blue")
-    ax.text(x, y, node_id, color="white", fontsize=5)
+    ax.text(x, y, node_id, color="white", fontsize=6)
 
 # nodetest.txt 파일에서 노드 리스트 읽기
 with open('waypoints.txt', 'r') as file:
