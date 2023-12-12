@@ -20,7 +20,7 @@ for node_id in graph.nodes:
     ax.text(x, y, node_id, color="white", fontsize=5)
 
 # nodetest.txt 파일에서 노드 리스트 읽기
-with open('nodetest.txt', 'r') as file:
+with open('waypoints.txt', 'r') as file:
     node_list = [line.strip() for line in file]
 
 
