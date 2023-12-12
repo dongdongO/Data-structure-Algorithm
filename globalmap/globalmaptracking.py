@@ -1,176 +1,52 @@
-import numpy as np
-from PIL import Image
+import networkx as nx
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib.widgets import Button
+from PIL import Image
+from matplotlib.animation import FuncAnimation
 
-def draw_map_from_txt(input_file, path_points):
-    with open(input_file, 'r') as file:
-        data = [list(map(int, line.split())) for line in file]
+# .graphml 파일과 이미지 로드
+graph = nx.read_graphml('Competition_track_graph.graphml') 
+image_path = 'track06.png'
+img = Image.open(image_path)
 
-    map_data = np.array(data)
-    img_data = np.zeros((map_data.shape[0], map_data.shape[1], 3), dtype=np.uint8)
-    img_data[map_data != 7] = 255  # 흰색으로 설정
+fig, ax = plt.subplots()  # fig 객체 추가
+plt.imshow(img)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    plt.subplots_adjust(bottom=0.2)
-    img = Image.fromarray(img_data, 'RGB')
-    im = ax.imshow(img)
+for node_id in graph.nodes:
+    node_data = graph.nodes[node_id]
+    x = node_data.get("x", 0)*87.3
+    y = node_data.get("y", 0)*87.3
 
-    def update(frame):
-        if frame < len(path_points) - 1:
-            x0, y0 = path_points[frame]
-            x1, y1 = path_points[frame + 1]
-            ax.plot([x0, x1], [y0, y1], color='red')
-        return im,
+    ax.scatter(x, y, color="blue")
+    ax.text(x, y, node_id, color="white", fontsize=5)
 
-    ani = animation.FuncAnimation(fig, update, frames=len(path_points), interval=200, blit=False)
-    
-    class Index:
-        anim_running = False
+# nodetest.txt 파일에서 노드 리스트 읽기
+with open('nodetest.txt', 'r') as file:
+    node_list = [line.strip() for line in file]
 
-        def start_stop(self, event):
-            if self.anim_running:
-                ani.event_source.stop()
-                self.anim_running = False
-            else:
-                ani.event_source.start()
-                self.anim_running = True
 
-    callback = Index()
-    ax_start_stop = plt.axes([0.7, 0.05, 0.1, 0.075])
-    b_start_stop = Button(ax_start_stop, "Start/Stop")
-    b_start_stop.on_clicked(callback.start_stop)
+# 초기 빨간 점과 경로 선 설정
+red_dot, = ax.plot([], [], 'ro')
+path_line, = ax.plot([], [], 'r-')
 
-    plt.show()
+# 애니메이션 업데이트 함수
+def update(frame):
+    node_id = node_list[frame]
+    x, y = graph.nodes[node_id]['x']*87.3, graph.nodes[node_id]['y']*87.3
 
-# 경로를 나타내는 점들의 리스트 (예시)
-path_points = [\
-(1127.0, 1079.0), \
-(1169.0, 1081.0), \
-(1202.0, 1093.0), \
-(1229.0, 1109.0), \
-(1309.0, 1178.0), \
-(1495.0, 1180.0), \
-(1515.0, 1176.0), \
-(1535.0, 1163.0), \
-(1551.0, 1141.0), \
-(1556.0, 1118.0), \
-(1554.0, 944.0), \
-(1543.0, 921.0), \
-(1526.0, 903.0), \
-(1499.0, 899.0), \
-(1474.0, 893.0), \
-(1450.0, 876.0), \
-(1438.0, 846.0), \
-(1434.0, 665.0), \
-(1448.0, 630.0), \
-(1479.0, 569.0), \
-(1482.0, 519.0), \
-(1479.0, 410.0), \
-(1511.0, 363.0), \
-(1541.0, 340.0), \
-(1585.0, 342.0), \
-(1625.0, 345.0), \
-(1753.0, 336.0), \
-(1807.0, 312.0), \
-(1829.0, 273.0), \
-(1830.0, 222.0), \
-(1829.0, 150.0), \
-(1819.0, 128.0), \
-(1799.0, 100.0), \
-(1776.0, 84.0), \
-(1754.0, 79.0), \
-(1525.0, 80.0), \
-(1503.0, 89.0), \
-(1478.0, 102.0), \
-(1463.0, 126.0), \
-(1450.0, 146.0), \
-(1452.0, 191.0), \
-(1451.0, 238.0), \
-(1445.0, 269.0), \
-(1420.0, 295.0), \
-(1373.0, 308.0), \
-(1323.0, 306.0), \
-(1291.0, 301.0), \
-(1271.0, 285.0), \
-(1252.0, 272.0), \
-(1220.0, 272.0), \
-(1183.0, 270.0), \
-(1152.0, 268.0), \
-(1123.0, 264.0), \
-(1087.0, 259.0), \
-(1054.0, 254.0), \
-(1030.0, 239.0), \
-(1007.0, 226.0), \
-(982.0, 214.0), \
-(954.0, 196.0), \
-(931.0, 186.0), \
-(902.0, 172.0), \
-(866.0, 159.0), \
-(834.0, 152.0), \
-(798.0, 152.0), \
-(756.0, 146.0), \
-(724.0, 147.0), \
-(694.0, 152.0), \
-(668.0, 159.0), \
-(649.0, 173.0), \
-(613.0, 184.0), \
-(573.0, 186.0), \
-(523.0, 187.0), \
-(470.0, 185.0), \
-(437.0, 184.0), \
-(379.0, 186.0), \
-(340.0, 185.0), \
-(302.0, 185.0), \
-(258.0, 184.0), \
-(219.0, 188.0), \
-(177.0, 187.0), \
-(132.0, 208.0), \
-(116.0, 232.0), \
-(105.0, 256.0), \
-(98.0, 291.0), \
-(103.0, 315.0), \
-(109.0, 354.0), \
-(137.0, 368.0), \
-(167.0, 373.0), \
-(206.0, 382.0), \
-(235.0, 375.0), \
-(266.0, 370.0), \
-(301.0, 360.0), \
-(333.0, 359.0), \
-(367.0, 359.0), \
-(411.0, 373.0), \
-(440.0, 392.0), \
-(466.0, 414.0), \
-(491.0, 443.0), \
-(504.0, 475.0), \
-(515.0, 513.0), \
-(517.0, 545.0), \
-(526.0, 624.0), \
-(554.0, 644.0), \
-(590.0, 642.0), \
-(639.0, 655.0), \
-(672.0, 688.0), \
-(682.0, 724.0), \
-(679.0, 768.0), \
-(656.0, 792.0), \
-(651.0, 817.0), \
-(649.0, 839.0), \
-(649.0, 888.0), \
-(647.0, 919.0), \
-(647.0, 951.0), \
-(648.0, 993.0), \
-(646.0, 1041.0), \
-(646.0, 1073.0), \
-(645.0, 1104.0), \
-(648.0, 1136.0), \
-(646.0, 1168.0), \
-(679.0, 1182.0), \
-(711.0, 1180.0), \
-(755.0, 1181.0), \
-(774.0, 1183.0), \
-]
-input_file = "map-index.txt"
-draw_map_from_txt(input_file, path_points)
+    red_dot.set_data(x, y)
+    if frame > 0:
+        prev_x, prev_y = path_line.get_data()
+        new_x, new_y = list(prev_x) + [x], list(prev_y) + [y]
+        path_line.set_data(new_x, new_y)
+
+    return red_dot, path_line
+
+# 애니메이션 생성
+ani = FuncAnimation(fig, update, frames=len(node_list))
+
+# 축 숨기기
+plt.axis('off')
+
+# 애니메이션 보여주기
+plt.show()
 
