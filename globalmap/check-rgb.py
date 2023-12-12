@@ -1,13 +1,19 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 
+'''
+To check accurate RGB data for map
+If you click the map, RGB status will shown in terminal
+'''
+
 def get_rgb(event):
     x = canvas.canvasx(event.x)
     y = canvas.canvasy(event.y)
     rgb = image.getpixel((x, y))
     print(f"RGB at ({x}, {y}): {rgb}")
+    # print(f"({x}, {y}), \\")
 
-image_path = "track01.png"
+image_path = "track06.png"
 
 image = Image.open(image_path)
 
