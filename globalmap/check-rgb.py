@@ -13,7 +13,7 @@ def get_rgb(event):
     print(f"RGB at ({x}, {y}): {rgb}")
     # print(f"({x}, {y}), \\")
 
-image_path = "track06.png"
+image_path = "track10.png"
 
 image = Image.open(image_path)
 

@@ -5,16 +5,18 @@ from matplotlib.animation import FuncAnimation
 
 # .graphml 파일과 이미지 로드
 graph = nx.read_graphml('Competition_track_graph.graphml') 
-image_path = 'track06.png'
+image_path = 'track10.png'
 img = Image.open(image_path)
 
-fig, ax = plt.subplots()  # fig 객체 추가
+resolution = 95.85
+
+fig, ax = plt.subplots()
 plt.imshow(img)
 
 for node_id in graph.nodes:
     node_data = graph.nodes[node_id]
-    x = node_data.get("x", 0)*87.3
-    y = node_data.get("y", 0)*87.3
+    x = node_data.get("x", 0)*resolution
+    y = node_data.get("y", 0)*resolution
 
     ax.scatter(x, y, color="blue")
     ax.text(x, y, node_id, color="white", fontsize=6)
@@ -31,7 +33,7 @@ path_line, = ax.plot([], [], 'r-')
 # 애니메이션 업데이트 함수
 def update(frame):
     node_id = node_list[frame]
-    x, y = graph.nodes[node_id]['x']*87.3, graph.nodes[node_id]['y']*87.3
+    x, y = graph.nodes[node_id]['x']*resolution, graph.nodes[node_id]['y']*resolution
 
     red_dot.set_data(x, y)
     if frame > 0:
