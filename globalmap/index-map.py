@@ -29,7 +29,7 @@ def map_colors_to_numbers(image_path, output_file):
         for row in result:
             file.write(' '.join(map(str, row)) + '\n')
 
-image_path = "track10.png"
+image_path = "track07.png"
 output_file = "map-index.txt"
 map_colors_to_numbers(image_path, output_file)
 

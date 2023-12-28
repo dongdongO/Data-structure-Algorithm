@@ -1,6 +1,6 @@
 #pragma once
 
-#include <util/point.h>
+#include <utils/point.h>
 
 #include <vector>
 #include <cmath>
